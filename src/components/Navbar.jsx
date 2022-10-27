@@ -16,7 +16,7 @@ const Navbar = ({ handleChange, filter }) => {
   };
 
   return (
-    <header>
+    <header className="sticky top-0 bg-white">
       <nav className="container mx-auto p-4 flex justify-between items-center">
         <div className="flex md:gap-10 gap-5 items-center">
           <div className="bg-primary rounded-full flex justify-center items-center w-[50px] h-[50px]">
@@ -58,6 +58,23 @@ const Navbar = ({ handleChange, filter }) => {
           <div onClick={handleNav}>
             {nav ? <BiX size={30} /> : <BiMenu size={30} />}
           </div>
+          <ul
+            className={
+              nav
+                ? "absolute top-[70px] right-[40px] bg-white shadow-lg p-4 font-semibold text-lg"
+                : "hidden"
+            }
+          >
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/like">Like</Link>
+            </li>
+            <li>
+              <a href="#latest">Baru Dibaca</a>
+            </li>
+          </ul>
         </div>
       </nav>
     </header>

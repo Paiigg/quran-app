@@ -2,25 +2,29 @@ import React, { useEffect, useState } from "react";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
-import Like from "./components/Like";
 import axios from "axios";
 import Surat from "./components/Surat";
+import { useDispatch, useSelector } from "react-redux";
+import { quranFetch } from "./redux/QuranSlice/quranSlice";
+import Like from "./components/Like";
 
 function App() {
-  const [surat, setSurat] = useState([]);
   const [filter, setFilter] = useState("");
+  const surat = useSelector((state) => state.quran.data);
 
-  const url = `https://equran.id/api/surat`;
+  const dispatch = useDispatch();
 
-  const getSurat = async () => {
-    const res = await axios.get(url);
-    console.log(res);
-    setSurat(res.data);
-  };
+  // const url = `https://equran.id/api/surat`;
+
+  // const getSurat = async () => {
+  //   const res = await axios.get(url);
+  //   console.log(res);
+  //   setSurat(res.data);
+  // };
 
   useEffect(() => {
-    getSurat();
-  }, [url]);
+    dispatch(quranFetch());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setFilter(e.target.value);
@@ -35,8 +39,8 @@ function App() {
       <Navbar data={surat} handleChange={handleChange} filter={filter} />
       <Routes>
         <Route path="/" element={<Home data={filteredSurat} />} />
-        <Route path="/like" element={<Like />} />
         <Route path="/surat/:nomor" element={<Surat />} />
+        <Route path="/like" element={<Like />} />
       </Routes>
     </div>
   );

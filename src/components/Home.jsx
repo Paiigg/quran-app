@@ -4,8 +4,13 @@ import ReactPaginate from "react-paginate";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import RightBar from "./RightBar";
+import { useDispatch, useSelector } from "react-redux";
+import { addLike } from "../redux/QuranSlice/likeSlice";
+import { addLatest } from "../redux/QuranSlice/latestSlice";
 
 const Home = ({ data }) => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.quran.isLoading);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -13,8 +18,14 @@ const Home = ({ data }) => {
   const [heart, setHeart] = useState(false);
   const navigate = useNavigate();
 
-  const handleHeart = () => {
+  const handleLike = (item) => {
     setHeart(!heart);
+    dispatch(addLike(item));
+  };
+
+  const handleLatest = (item) => {
+    navigate(`/surat/${item.nomor}`);
+    dispatch(addLatest(item));
   };
 
   useEffect(() => {
@@ -37,56 +48,62 @@ const Home = ({ data }) => {
   return (
     <div className="container mx-auto px-4 md:flex justify-between mt-5">
       <LeftBar />
-      <div className="bg-secondary rounded-3xl md:w-[70%] w-full p-4">
-        <div className="grid md:grid-cols-4 gap-5">
-          {currentItems?.map((item) => (
-            <div className="bg-[#fefefe] rounded-lg p-4">
-              <div className="flex gap-3 flex-col">
-                <div className="flex items-center justify-between">
-                  <div className="rounded-full bg-secondary flex justify-center items-center w-[40px] h-[40px] text-primary">
-                    <p>{item.nomor}</p>
-                  </div>
-                  <div onClick={handleHeart}>
-                    {heart ? (
-                      <AiFillHeart size={20} style={{ color: "#00ad68" }} />
-                    ) : (
-                      <AiOutlineHeart size={20} />
-                    )}
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3">
+      {isLoading ? (
+        <p>Loading . . .</p>
+      ) : (
+        <div className="bg-secondary rounded-3xl md:w-[70%] w-full p-4 ">
+          <div className="grid md:grid-cols-4 gap-5">
+            {currentItems?.map((item) => (
+              <div className="bg-[#fefefe] rounded-lg p-4" key={item.nomor}>
+                <div className="flex gap-3 flex-col">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <Link to={`/surat/${item.nomor}`}>
-                        <p className="font-semibold">{item.nama_latin}</p>
-                      </Link>
-                      <p className="text-sub text-sm">{item.arti}</p>
+                    <div className="rounded-full bg-secondary flex justify-center items-center w-[40px] h-[40px] text-primary">
+                      <p>{item.nomor}</p>
                     </div>
-                    <p className="font-semibold">{item.nama}</p>
+
+                    <button onClick={() => handleLike(item)}>
+                      {heart ? (
+                        <AiFillHeart size={20} style={{ color: "#00ad68" }} />
+                      ) : (
+                        <AiOutlineHeart size={20} />
+                      )}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => navigate(`/surat/${item.nomor}`)}
-                    className="text-white bg-primary py-2 w-full rounded-lg hover:opacity-80"
-                  >
-                    Baca
-                  </button>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Link to={`/surat/${item.nomor}`}>
+                          <p className="font-semibold">{item.nama_latin}</p>
+                        </Link>
+                        <p className="text-sub text-sm">{item.arti}</p>
+                      </div>
+                      <p className="font-semibold">{item.nama}</p>
+                    </div>
+                    <button
+                      onClick={() => handleLatest(item)}
+                      className="text-white bg-primary py-2 w-full rounded-lg hover:opacity-80"
+                    >
+                      Baca
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel=">>"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={2}
-          pageCount={pageCount}
-          previousLabel="<<"
-          renderOnZeroPageCount={null}
-          containerClassName="flex gap-5 items-center justify-center mt-5"
-        />
-      </div>
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel=">>"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={2}
+            pageCount={pageCount}
+            previousLabel="<<"
+            renderOnZeroPageCount={null}
+            containerClassName="flex gap-5 items-center justify-center mt-5"
+          />
+        </div>
+      )}
+
       <RightBar />
     </div>
   );
