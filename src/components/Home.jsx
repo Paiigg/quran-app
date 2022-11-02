@@ -15,11 +15,11 @@ const Home = ({ data }) => {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 16;
-  const [heart, setHeart] = useState(false);
+  const [heart, setHeart] = useState("");
   const navigate = useNavigate();
 
   const handleLike = (item) => {
-    setHeart(!heart);
+    setHeart(item.nomor);
     dispatch(addLike(item));
   };
 
@@ -62,7 +62,7 @@ const Home = ({ data }) => {
                     </div>
 
                     <button onClick={() => handleLike(item)}>
-                      {heart ? (
+                      {heart === item.nomor ? (
                         <AiFillHeart size={20} style={{ color: "#00ad68" }} />
                       ) : (
                         <AiOutlineHeart size={20} />
